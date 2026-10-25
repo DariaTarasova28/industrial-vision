@@ -1,6 +1,18 @@
 import os
 import sys
 import cv2
+import logging
+from logging.handlers import RotatingFileHandler
+
+os.makedirs("logs", exist_ok=True)
+handler = RotatingFileHandler(
+    "logs/application.log", maxBytes=5_000_000, backupCount=3, encoding="utf-8"
+)
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[handler, logging.StreamHandler()],
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -31,7 +43,7 @@ def draw_detection(frame, det):
 
 
 def main():
-    source = 0  # веб-камера; можно "data/test_video.mp4"
+    source = "data/street.mp4"  # веб-камера; можно "data/test_video.mp4"
     model_path = "models/yolov8n.pt"
     confidence = 0.4
 

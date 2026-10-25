@@ -20,7 +20,14 @@ class VideoSource:
             self.cap.release()
         self.cap = cv2.VideoCapture(self.source)
         if not self.cap.isOpened():
-            raise RuntimeError(f"Cannot open video source: {self.source}")
+            # Первая попытка не удалась — ждём и пробуем снова один раз
+            time.sleep(self.reconnect_sec)
+            self.cap.release()
+            self.cap = cv2.VideoCapture(self.source)
+            if not self.cap.isOpened():
+                raise RuntimeError(
+                    f"Cannot open video source after retry: {self.source}"
+                )
 
     def read(self):
         """
